@@ -3,7 +3,7 @@
 ## Installation
 
 ```bash
-pip install finviz-data
+pip install git+https://github.com/diversen/finviz-data
 ```
 
 ## Usage
@@ -23,6 +23,3 @@ fundamentals = finviz_data.get_fundementals_float(soup)
 
 # Get basic company info
 company_info = finviz_data.get_company_info(soup)
-
-
-
