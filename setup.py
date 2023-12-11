@@ -5,8 +5,8 @@ with open('requirements.txt') as f:
 
 setup(
     name='finviz-data',
-    version='0.1.0',
-    description='Simple script to get data from finviz.com',
+    version='v0.0.1',
+    description='Simple package to get data from finviz.com',
     author='Dennis Iversen',
     author_email='dennis.iversen@gmail.com@com',
     url='https://github.com/diversen/finviz-data',  # Optional
