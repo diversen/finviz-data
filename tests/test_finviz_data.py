@@ -35,7 +35,7 @@ class TestFinvizData(unittest.TestCase):
     def test_get_get_fundamentals_converted(self):
         ticker = "AAL"
         soup = finviz_data.get_soup(ticker)
-        fundamentals_converted = finviz_data.get_fundamentals_converted(soup)
+        fundamentals_converted = finviz_data.get_fundamentals_float(soup)
         self.assertIsInstance(fundamentals_converted, dict)
 
         print(fundamentals_converted)
