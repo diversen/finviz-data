@@ -18,8 +18,6 @@ class TestFinvizData(unittest.TestCase):
         # asset is dict
         self.assertIsInstance(fundamentals, dict)
 
-        print(fundamentals)
-
     def test_get_company_info(self):
         ticker = "AAL"
         soup = finviz_data.get_soup(ticker)
@@ -37,8 +35,6 @@ class TestFinvizData(unittest.TestCase):
         soup = finviz_data.get_soup(ticker)
         fundamentals_converted = finviz_data.get_fundamentals_float(soup)
         self.assertIsInstance(fundamentals_converted, dict)
-
-        print(fundamentals_converted)
 
 
 if __name__ == "__main__":

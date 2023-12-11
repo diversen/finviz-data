@@ -26,12 +26,22 @@ def get_fundamentals(soup: BeautifulSoup) -> dict:
             value = cells[i + 1].get_text().strip()
             financial_data[key] = value
 
+    # add company info
+    company_info = get_company_info(soup)
+    financial_data.update(company_info)
+
     return financial_data
 
 
 def get_fundamentals_float(soup: BeautifulSoup):
     fundamentals = get_fundamentals(soup)
-    return _convert_to_floats(fundamentals)
+    fundamentals_float = _convert_to_floats(fundamentals)
+
+    # add company info
+    company_info = get_company_info(soup)
+    fundamentals_float.update(company_info)
+
+    return fundamentals_float
 
 
 def get_company_info(soup: BeautifulSoup):
