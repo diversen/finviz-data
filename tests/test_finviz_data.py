@@ -36,6 +36,8 @@ class TestFinvizData(unittest.TestCase):
         fundamentals_converted = finviz_data.get_fundamentals_float(soup)
         self.assertIsInstance(fundamentals_converted, dict)
 
+        print(fundamentals_converted)
+
 
 if __name__ == "__main__":
     unittest.main()

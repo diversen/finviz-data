@@ -28,7 +28,7 @@ def get_fundamentals(soup: BeautifulSoup) -> dict:
 
     # add company info
     company_info = get_company_info(soup)
-    financial_data.update(company_info)
+    financial_data = {**company_info, **financial_data}
 
     return financial_data
 
@@ -39,12 +39,22 @@ def get_fundamentals_float(soup: BeautifulSoup):
 
     # add company info
     company_info = get_company_info(soup)
-    fundamentals_float.update(company_info)
+    fundamentals_float = {**company_info, **fundamentals_float}
 
     return fundamentals_float
 
 
 def get_company_info(soup: BeautifulSoup):
+    base_info = {}
+
+    # Get ticker. Text ontent of quote-header_ticker-wrapper_ticker
+    ticker = soup.find("h1", class_="quote-header_ticker-wrapper_ticker").text
+    base_info["ticker"] = ticker
+
+    # Get company name. Text content of h2.quote-header_ticker-wrapper_company a
+    company_name = (soup.find("h2", class_="quote-header_ticker-wrapper_company").find("a").text)
+    base_info["company_name"] = company_name.strip()
+
     # Finding the first inner div of the element with class 'quote-links'
     first_inner_div = soup.find("div", class_="quote-links").find("div")
 
@@ -52,12 +62,10 @@ def get_company_info(soup: BeautifulSoup):
     links = first_inner_div.find_all("a")
 
     # Extracting text values of the links and assigning them to the appropriate keys in the 'base_info' dictionary
-    base_info = {
-        "sector": links[0].text,
-        "industry": links[1].text,
-        "country": links[2].text,
-        "exchange": links[3].text,
-    }
+    base_info["sector"] = links[0].text
+    base_info["industry"] = links[1].text
+    base_info["country"] = links[2].text
+    base_info["exchange"] = links[3].text
 
     return base_info
 
