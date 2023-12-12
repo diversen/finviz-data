@@ -4,7 +4,7 @@ from finviz_data import finviz_data
 import unittest
 
 
-ticker = "IPI"
+ticker = "ABNB"
 
 
 class TestFinvizData(unittest.TestCase):

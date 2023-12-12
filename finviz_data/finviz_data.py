@@ -107,11 +107,29 @@ def _convert_to_floats(data_dict):
     # Remove 52W Range
     del data_dict["52W Range"]
 
+    # volatility 2.86% 3.06%
+    volatility = data_dict["Volatility"]
+    volatility = volatility.split()
+    data_dict["volatility_week"] = volatility[0]
+    data_dict["volatility_month"] = volatility[1]
+
+    # Remove Volatility
+    del data_dict["Volatility"]
+
+    # Short Float / Ratio	5.70% / 3.56
+    short_float = data_dict["Short Float / Ratio"]
+    short_float = short_float.split("/")
+    data_dict["short_float"] = short_float[0]
+    data_dict["short_ratio"] = short_float[1]
+
+    # Remove Short Float / Ratio
+    del data_dict["Short Float / Ratio"]
+
     new_data = {}
     for key, value in data_dict.items():
         if value == "-":
             new_data[key] = None
         else:
-            new_data[key] = _convert_value(value)
+            new_data[key] = _convert_value(value.strip())
 
     return new_data
