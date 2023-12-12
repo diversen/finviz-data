@@ -4,7 +4,7 @@ from finviz_data import finviz_data
 import unittest
 
 
-ticker = "ABNB"
+ticker = "AAPL"
 
 
 class TestFinvizData(unittest.TestCase):

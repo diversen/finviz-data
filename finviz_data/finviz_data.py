@@ -4,7 +4,7 @@ from bs4 import BeautifulSoup
 
 
 def get_soup(ticker) -> BeautifulSoup:
-    url = "https://finviz.com/quote.ashx?t=" + ticker
+    url = f"https://finviz.com/quote.ashx?t={ticker}&p=d"
     html = requests.get(url, headers={"User-Agent": "Mozilla/5.0"}).text
     soup = BeautifulSoup(html, "html.parser")
     return soup
@@ -45,7 +45,7 @@ def get_company_info(soup: BeautifulSoup):
 
     # Get company name. Text content of h2.quote-header_ticker-wrapper_company a
     company_name = (
-        soup.find("h2", class_="quote-header_ticker-wrapper_company").find("a").text
+        soup.find("h2", class_="quote-header_ticker-wrapper_company").text
     )
     base_info["company_name"] = company_name.strip()
 
