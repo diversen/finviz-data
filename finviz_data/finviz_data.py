@@ -44,7 +44,9 @@ def get_company_info(soup: BeautifulSoup):
     base_info["ticker"] = ticker
 
     # Get company name. Text content of h2.quote-header_ticker-wrapper_company a
-    company_name = (soup.find("h2", class_="quote-header_ticker-wrapper_company").find("a").text)
+    company_name = (
+        soup.find("h2", class_="quote-header_ticker-wrapper_company").find("a").text
+    )
     base_info["company_name"] = company_name.strip()
 
     # Finding the first inner div of the element with class 'quote-links'
@@ -62,6 +64,32 @@ def get_company_info(soup: BeautifulSoup):
     return base_info
 
 
+def _is_float_like(val):
+    try:
+        float(val)
+        return True
+    except ValueError:
+        return False
+
+
+def _convert_value(value):
+    if value is None:
+        return None
+
+    if value.endswith("%") and _is_float_like(value.strip("%")):
+        return float(value.strip("%")) / 100
+    elif value.endswith("M") and _is_float_like(value.strip("M")):
+        return float(value.strip("M")) * 1e6
+    elif value.endswith("B") and _is_float_like(value.strip("B")):
+        return float(value.strip("B")) * 1e9
+    elif value.endswith("T") and _is_float_like(value.strip("T")):
+        return float(value.strip("T")) * 1e12
+    elif value.replace(".", "", 1).replace(",", "").isdigit():
+        return float(value.replace(",", ""))
+    else:
+        return value
+
+
 def _convert_to_floats(data_dict):
     """
     Converts values in a dictionary to floats where applicable.
@@ -71,23 +99,6 @@ def _convert_to_floats(data_dict):
     - Converts values ending in 'M', 'B', or 'T' to their numeric equivalents in millions, billions, or trillions.
     - Converts numeric strings with commas (e.g., '30,196,932') into floats.
     """
-
-    def _convert_value(value):
-        if value is None:
-            return None
-        if "%" in value:
-            first_percentage = value.split()[0]
-            return float(first_percentage.strip("%")) / 100
-        elif value.endswith("M"):
-            return float(value.strip("M")) * 1e6
-        elif value.endswith("B"):
-            return float(value.strip("B")) * 1e9
-        elif value.endswith("T"):
-            return float(value.strip("T")) * 1e12
-        elif value.replace(".", "", 1).replace(",", "").isdigit():
-            return float(value.replace(",", ""))
-        else:
-            return value
 
     week_range_52 = data_dict["52W Range"].split("-")
     data_dict["52 low"] = week_range_52[0]
