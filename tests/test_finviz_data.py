@@ -23,10 +23,11 @@ class TestFinvizData(unittest.TestCase):
         self.assertIsInstance(company_info, dict)
 
         # check if company_info has all the keys
-        self.assertIn("sector", company_info)
-        self.assertIn("industry", company_info)
-        self.assertIn("country", company_info)
-        self.assertIn("exchange", company_info)
+        self.assertIn("Company", company_info)
+        self.assertIn("Sector", company_info)
+        self.assertIn("Industry", company_info)
+        self.assertIn("Country", company_info)
+        self.assertIn("Exchange", company_info)
 
     def test_get_get_fundamentals_converted(self):
         soup = finviz_data.get_soup(ticker)

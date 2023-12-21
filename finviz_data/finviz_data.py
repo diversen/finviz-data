@@ -41,13 +41,13 @@ def get_company_info(soup: BeautifulSoup):
 
     # Get ticker. Text ontent of quote-header_ticker-wrapper_ticker
     ticker = soup.find("h1", class_="quote-header_ticker-wrapper_ticker").text
-    base_info["ticker"] = ticker
+    base_info["Ticker"] = ticker
 
     # Get company name. Text content of h2.quote-header_ticker-wrapper_company a
     company_name = (
         soup.find("h2", class_="quote-header_ticker-wrapper_company").text
     )
-    base_info["company_name"] = company_name.strip()
+    base_info["Company"] = company_name.strip()
 
     # Finding the first inner div of the element with class 'quote-links'
     first_inner_div = soup.find("div", class_="quote-links").find("div")
@@ -56,10 +56,10 @@ def get_company_info(soup: BeautifulSoup):
     links = first_inner_div.find_all("a")
 
     # Extracting text values of the links and assigning them to the appropriate keys in the 'base_info' dictionary
-    base_info["sector"] = links[0].text
-    base_info["industry"] = links[1].text
-    base_info["country"] = links[2].text
-    base_info["exchange"] = links[3].text
+    base_info["Sector"] = links[0].text
+    base_info["Industry"] = links[1].text
+    base_info["Country"] = links[2].text
+    base_info["Exchange"] = links[3].text
 
     return base_info
 
@@ -101,8 +101,8 @@ def _convert_to_floats(data_dict):
     """
 
     week_range_52 = data_dict["52W Range"].split("-")
-    data_dict["52 low"] = week_range_52[0]
-    data_dict["52 high"] = week_range_52[1]
+    data_dict["52 Low"] = week_range_52[0]
+    data_dict["52 High"] = week_range_52[1]
 
     # Remove 52W Range
     del data_dict["52W Range"]
@@ -110,8 +110,8 @@ def _convert_to_floats(data_dict):
     # volatility 2.86% 3.06%
     volatility = data_dict["Volatility"]
     volatility = volatility.split()
-    data_dict["volatility_week"] = volatility[0]
-    data_dict["volatility_month"] = volatility[1]
+    data_dict["Volatility Week"] = volatility[0]
+    data_dict["Volatility Month"] = volatility[1]
 
     # Remove Volatility
     del data_dict["Volatility"]
@@ -119,8 +119,8 @@ def _convert_to_floats(data_dict):
     # Short Float / Ratio	5.70% / 3.56
     short_float = data_dict["Short Float / Ratio"]
     short_float = short_float.split("/")
-    data_dict["short_float"] = short_float[0]
-    data_dict["short_ratio"] = short_float[1]
+    data_dict["Short Float"] = short_float[0]
+    data_dict["Short Ratio"] = short_float[1]
 
     # Remove Short Float / Ratio
     del data_dict["Short Float / Ratio"]
