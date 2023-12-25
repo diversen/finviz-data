@@ -29,14 +29,14 @@ def get_fundamentals(soup: BeautifulSoup) -> dict:
     return financial_data
 
 
-def get_fundamentals_float(soup: BeautifulSoup):
+def get_fundamentals_float(soup: BeautifulSoup) -> dict:
     fundamentals = get_fundamentals(soup)
     fundamentals_float = _convert_to_floats(fundamentals)
 
     return fundamentals_float
 
 
-def get_company_info(soup: BeautifulSoup):
+def get_company_info(soup: BeautifulSoup) -> dict:
     base_info = {}
 
     # Get ticker. Text ontent of quote-header_ticker-wrapper_ticker
@@ -64,7 +64,7 @@ def get_company_info(soup: BeautifulSoup):
     return base_info
 
 
-def _is_float_like(val):
+def _is_float_like(val: str) -> bool:
     try:
         float(val)
         return True
@@ -72,7 +72,7 @@ def _is_float_like(val):
         return False
 
 
-def _convert_value(value):
+def _convert_value(value: str):
     if value is None:
         return None
 
@@ -90,7 +90,7 @@ def _convert_value(value):
         return value
 
 
-def _convert_to_floats(data_dict):
+def _convert_to_floats(data_dict: dict) -> dict:
     """
     Converts values in a dictionary to floats where applicable.
     - Replaces single dash ('-') with None.

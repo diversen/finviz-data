@@ -1,5 +1,7 @@
 # finviz-data
 
+A simple package for getting fundamental data from finviz.com for a single ticker.
+
 ## Installation
 
 ```bash
@@ -12,7 +14,7 @@ pip install git+https://github.com/diversen/finviz-data
 
 from finviz_data import finviz_data
 
-# Get the data for a single ticker
+# Get the html soup for a single ticker
 soup = finviz_data.get_soup('AAPL')
 
 # Get the fundamentals for a single ticker
