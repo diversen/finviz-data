@@ -116,15 +116,6 @@ def _convert_to_floats(data_dict: dict) -> dict:
     # Remove Volatility
     del data_dict["Volatility"]
 
-    # Short Float / Ratio	5.70% / 3.56
-    short_float = data_dict["Short Float / Ratio"]
-    short_float = short_float.split("/")
-    data_dict["Short Float"] = short_float[0]
-    data_dict["Short Ratio"] = short_float[1]
-
-    # Remove Short Float / Ratio
-    del data_dict["Short Float / Ratio"]
-
     new_data = {}
     for key, value in data_dict.items():
         if value == "-":
