@@ -100,13 +100,6 @@ def _convert_to_floats(data_dict: dict) -> dict:
     - Converts numeric strings with commas (e.g., '30,196,932') into floats.
     """
 
-    week_range_52 = data_dict["52W Range"].split("-")
-    data_dict["52 Low"] = week_range_52[0]
-    data_dict["52 High"] = week_range_52[1]
-
-    # Remove 52W Range
-    del data_dict["52W Range"]
-
     # volatility 2.86% 3.06%
     volatility = data_dict["Volatility"]
     volatility = volatility.split()
