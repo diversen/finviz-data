@@ -1,6 +1,7 @@
-# get html from url
-from curl_cffi import requests
+from datetime import datetime
+
 from bs4 import BeautifulSoup
+from curl_cffi import requests
 
 
 def get_soup(ticker) -> BeautifulSoup:
@@ -81,7 +82,11 @@ def _convert_value(value: str):
     if value is None:
         return None
 
-    if value.endswith("%") and _is_float_like(value.strip("%")):
+    value = value.strip()
+
+    if value in ("", "-"):
+        return None
+    elif value.endswith("%") and _is_float_like(value.strip("%")):
         return float(value.strip("%")) / 100
     elif value.endswith("M") and _is_float_like(value.strip("M")):
         return float(value.strip("M")) * 1e6
@@ -89,10 +94,61 @@ def _convert_value(value: str):
         return float(value.strip("B")) * 1e9
     elif value.endswith("T") and _is_float_like(value.strip("T")):
         return float(value.strip("T")) * 1e12
-    elif value.replace(".", "", 1).replace(",", "").isdigit():
+    elif _is_float_like(value.replace(",", "")):
         return float(value.replace(",", ""))
     else:
         return value
+
+
+def _convert_date(value: str):
+    try:
+        return datetime.strptime(value, "%b %d, %Y").date().isoformat()
+    except ValueError:
+        return _convert_value(value)
+
+
+def _split_two_values(value: str, first_key: str, second_key: str) -> dict:
+    values = value.split()
+    if len(values) != 2:
+        return {first_key: _convert_value(value), second_key: None}
+
+    return {
+        first_key: _convert_value(values[0]),
+        second_key: _convert_value(values[1]),
+    }
+
+
+def _split_dividend(value: str, amount_key: str, yield_key: str) -> dict:
+    values = value.replace("(", "").replace(")", "").split()
+    if len(values) != 2:
+        return {amount_key: _convert_value(value), yield_key: None}
+
+    return {
+        amount_key: _convert_value(values[0]),
+        yield_key: _convert_value(values[1]),
+    }
+
+
+def _split_option_short(value: str) -> dict:
+    values = [item.strip() for item in value.split("/")]
+    if len(values) != 2:
+        return {"Optionable": _convert_value(value), "Shortable": None}
+
+    return {
+        "Optionable": values[0] == "Yes",
+        "Shortable": values[1] == "Yes",
+    }
+
+
+def _split_earnings(value: str) -> dict:
+    values = value.split()
+    if len(values) < 3:
+        return {"Earnings Date": _convert_value(value), "Earnings Time": None}
+
+    return {
+        "Earnings Date": " ".join(values[:-1]),
+        "Earnings Time": values[-1],
+    }
 
 
 def _convert_to_floats(data_dict: dict) -> dict:
@@ -105,20 +161,49 @@ def _convert_to_floats(data_dict: dict) -> dict:
     - Converts numeric strings with commas (e.g., '30,196,932') into floats.
     """
 
-    # volatility 2.86% 3.06%
-    volatility = data_dict["Volatility"]
-    volatility = volatility.split()
-    data_dict["Volatility Week"] = volatility[0]
-    data_dict["Volatility Month"] = volatility[1]
+    compound_fields = {
+        "Volatility": lambda value: _split_two_values(
+            value, "Volatility Week", "Volatility Month"
+        ),
+        "52W High": lambda value: _split_two_values(
+            value, "52W High Price", "52W High Change"
+        ),
+        "52W Low": lambda value: _split_two_values(
+            value, "52W Low Price", "52W Low Change"
+        ),
+        "EPS past 3/5Y": lambda value: _split_two_values(
+            value, "EPS past 3Y", "EPS past 5Y"
+        ),
+        "Sales past 3/5Y": lambda value: _split_two_values(
+            value, "Sales past 3Y", "Sales past 5Y"
+        ),
+        "Dividend Gr. 3/5Y": lambda value: _split_two_values(
+            value, "Dividend Gr. 3Y", "Dividend Gr. 5Y"
+        ),
+        "EPS/Sales Surpr.": lambda value: _split_two_values(
+            value, "EPS Surprise", "Sales Surprise"
+        ),
+        "Dividend Est.": lambda value: _split_dividend(
+            value, "Dividend Est. Amount", "Dividend Est. Yield"
+        ),
+        "Dividend TTM": lambda value: _split_dividend(
+            value, "Dividend TTM Amount", "Dividend TTM Yield"
+        ),
+        "Option/Short": _split_option_short,
+        "Earnings": _split_earnings,
+    }
 
-    # Remove Volatility
-    del data_dict["Volatility"]
+    date_fields = {"IPO", "Dividend Ex-Date"}
 
     new_data = {}
     for key, value in data_dict.items():
-        if value == "-":
-            new_data[key] = None
+        value = value.strip() if isinstance(value, str) else value
+
+        if key in compound_fields:
+            new_data.update(compound_fields[key](value))
+        elif key in date_fields:
+            new_data[key] = _convert_date(value)
         else:
-            new_data[key] = _convert_value(value.strip())
+            new_data[key] = _convert_value(value)
 
     return new_data
