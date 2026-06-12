@@ -1,11 +1,11 @@
 # get html from url
-import requests
+from curl_cffi import requests
 from bs4 import BeautifulSoup
 
 
 def get_soup(ticker) -> BeautifulSoup:
-    url = f"https://finviz.com/quote.ashx?t={ticker}&p=d"
-    html = requests.get(url, headers={"User-Agent": "Mozilla/5.0"}).text
+    url = f"https://finviz.com/stock?t={ticker}&p=d"
+    html = requests.get(url, impersonate="chrome").text
     soup = BeautifulSoup(html, "html.parser")
     return soup
 
@@ -55,11 +55,16 @@ def get_company_info(soup: BeautifulSoup) -> dict:
     # Extracting all links from the first inner div
     links = first_inner_div.find_all("a")
 
-    # Extracting text values of the links and assigning them to the appropriate keys in the 'base_info' dictionary
-    base_info["Sector"] = links[0].text
-    base_info["Industry"] = links[1].text
-    base_info["Country"] = links[2].text
-    base_info["Exchange"] = links[3].text
+    for link in links:
+        href = link.get("href", "")
+        if "f=sec_" in href:
+            base_info["Sector"] = link.text
+        elif "f=ind_" in href:
+            base_info["Industry"] = link.text
+        elif "f=geo_" in href:
+            base_info["Country"] = link.text
+        elif "f=exch_" in href:
+            base_info["Exchange"] = link.text
 
     return base_info
 
