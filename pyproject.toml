@@ -1,6 +1,6 @@
 [project]
 name = "finviz-data"
-version = "1.1.1"
+version = "1.2.0"
 description = "Simple package to get data from finviz.com"
 readme = "README.md"
 requires-python = ">=3.12"
