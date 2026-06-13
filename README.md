@@ -32,3 +32,4 @@ fundamentals = finviz_data.get_fundementals_float(soup)
 
 # Get basic company info, sector, ticker etc. 
 company_info = finviz_data.get_company_info(soup)
+```
