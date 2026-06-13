@@ -1,6 +1,6 @@
 version = 1
 revision = 3
-requires-python = ">=3.12"
+requires-python = ">=3.9"
 
 [[package]]
 name = "beautifulsoup4"
@@ -128,29 +128,17 @@ wheels = [
 
 [[package]]
 name = "finviz-data"
-version = "1.1.1"
+version = "1.2.1"
 source = { editable = "." }
 dependencies = [
     { name = "beautifulsoup4" },
-    { name = "certifi" },
-    { name = "charset-normalizer" },
     { name = "curl-cffi" },
-    { name = "idna" },
-    { name = "requests" },
-    { name = "soupsieve" },
-    { name = "urllib3" },
 ]
 
 [package.metadata]
 requires-dist = [
-    { name = "beautifulsoup4", specifier = "==4.12.2" },
-    { name = "certifi", specifier = "==2024.2.2" },
-    { name = "charset-normalizer", specifier = "==3.3.2" },
-    { name = "curl-cffi", specifier = "==0.7.4" },
-    { name = "idna", specifier = "==3.6" },
-    { name = "requests", specifier = "==2.31.0" },
-    { name = "soupsieve", specifier = "==2.5" },
-    { name = "urllib3", specifier = "==2.1.0" },
+    { name = "beautifulsoup4", specifier = ">=4.12,<5" },
+    { name = "curl-cffi", specifier = ">=0.7,<1" },
 ]
 
 [[package]]
