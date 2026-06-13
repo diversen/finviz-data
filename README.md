@@ -15,6 +15,16 @@ uv sync
 uv run python -m unittest discover
 ```
 
+By default, the live Finviz test is skipped. To run the full test suite without
+skipping the live test, enable it with `FINVIZ_LIVE_TESTS=1`:
+
+```bash
+FINVIZ_LIVE_TESTS=1 uv run python -m unittest discover
+```
+
+The live test makes a real request to finviz.com and may still be skipped if
+Finviz temporarily rate limits your IP.
+
 ## Usage
 
 ```python

@@ -1,9 +1,10 @@
 from finviz_data import finviz_data
 
 
-ticker = "AAPL"
+ticker = "BYDN"
 
 soup = finviz_data.get_soup(ticker)
+print(f"soup\n{soup}\n")
 fundamentals = finviz_data.get_fundamentals(soup)
 print(f"fundamentals\n{fundamentals}\n")
 

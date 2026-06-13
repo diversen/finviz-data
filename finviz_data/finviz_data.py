@@ -4,9 +4,21 @@ from bs4 import BeautifulSoup
 from curl_cffi import requests
 
 
+class FinvizRequestError(Exception):
+    """Raised when Finviz returns an unsuccessful HTTP response."""
+
+
 def get_soup(ticker) -> BeautifulSoup:
     url = f"https://finviz.com/stock?t={ticker}&p=d"
-    html = requests.get(url, impersonate="chrome").text
+    response = requests.get(url, impersonate="chrome")
+    status_code = getattr(response, "status_code", None)
+    if isinstance(status_code, int) and status_code >= 400:
+        raise FinvizRequestError(
+            f"Finviz request failed for ticker {ticker!r}: "
+            f"HTTP {status_code} ({url})"
+        )
+
+    html = response.text
     soup = BeautifulSoup(html, "html.parser")
     return soup
 

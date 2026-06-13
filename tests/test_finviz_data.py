@@ -20,7 +20,7 @@ class TestFinvizData(unittest.TestCase):
         cls.soup = BeautifulSoup(cls.html, "html.parser")
 
     def test_get_soup(self):
-        response = Mock(text=self.html)
+        response = Mock(text=self.html, status_code=200)
         with patch("finviz_data.finviz_data.requests.get", return_value=response) as get:
             soup = finviz_data.get_soup(ticker)
 
@@ -30,6 +30,17 @@ class TestFinvizData(unittest.TestCase):
         )
         self.assertIsNotNone(soup)
         self.assertEqual(soup.find("h1").get_text(strip=True), ticker)
+
+    def test_get_soup_raises_for_http_error(self):
+        response = Mock(text="Not found", status_code=404)
+        with patch("finviz_data.finviz_data.requests.get", return_value=response):
+            with self.assertRaises(finviz_data.FinvizRequestError) as error:
+                finviz_data.get_soup("BYDN")
+
+        message = str(error.exception)
+        self.assertIn("BYDN", message)
+        self.assertIn("HTTP 404", message)
+        self.assertIn("https://finviz.com/stock?t=BYDN&p=d", message)
 
     @unittest.skipUnless(
         os.getenv("FINVIZ_LIVE_TESTS") == "1",
@@ -57,6 +68,19 @@ class TestFinvizData(unittest.TestCase):
         company_info = finviz_data.get_company_info(soup)
         self.assertEqual(company_info["Ticker"], ticker)
         self.assertIn("Company", company_info)
+
+    @unittest.skipUnless(
+        os.getenv("FINVIZ_LIVE_TESTS") == "1",
+        "set FINVIZ_LIVE_TESTS=1 to run live Finviz tests",
+    )
+    def test_get_soup_live_raises_for_invalid_ticker(self):
+        with self.assertRaises(finviz_data.FinvizRequestError) as error:
+            finviz_data.get_soup("BYDN")
+
+        message = str(error.exception)
+        self.assertIn("BYDN", message)
+        self.assertIn("HTTP 404", message)
+        self.assertIn("https://finviz.com/stock?t=BYDN&p=d", message)
 
     def test_get_fundamentals(self):
         fundamentals = finviz_data.get_fundamentals(self.soup)
