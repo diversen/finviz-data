@@ -5,7 +5,13 @@ A simple package for getting fundamental data from finviz.com for a single ticke
 ## Installation
 
 ```bash
-uv add git+https://github.com/diversen/finviz-data
+uv add finviz-data
+```
+
+Alternatively, install it with pip:
+
+```bash
+pip install finviz-data
 ```
 
 ## Development
