@@ -24,20 +24,23 @@ def get_soup(ticker) -> BeautifulSoup:
 
 
 def get_fundamentals(soup: BeautifulSoup) -> dict:
-    # get table with class='snapshot-table2'
-    table = soup.find("table", {"class": "snapshot-table2"})
+    # Finviz may render the snapshot as one table or split it into several
+    # responsive columns, all with the same class.
+    tables = soup.find_all("table", {"class": "snapshot-table2"})
 
     # Initialize a dictionary to store the key-value pairs
     financial_data = {}
 
-    # Iterate through all rows of the table
-    for row in table.find_all("tr"):
-        # Each cell in the row
-        cells = row.find_all("td")
-        for i in range(0, len(cells), 2):  # Step by 2 as key and value are in pairs
-            key = cells[i].get_text().strip()
-            value = cells[i + 1].get_text().strip()
-            financial_data[key] = value
+    for table in tables:
+        # Iterate through all rows of the table
+        for row in table.find_all("tr"):
+            # Each cell in the row
+            cells = row.find_all("td")
+            # Step by two because the cells are key/value pairs.
+            for i in range(0, len(cells), 2):
+                key = cells[i].get_text().strip()
+                value = cells[i + 1].get_text().strip()
+                financial_data[key] = value
 
     return financial_data
 
@@ -62,11 +65,10 @@ def get_company_info(soup: BeautifulSoup) -> dict:
     )
     base_info["Company"] = company_name.strip()
 
-    # Finding the first inner div of the element with class 'quote-links'
-    first_inner_div = soup.find("div", class_="quote-links").find("div")
-
-    # Extracting all links from the first inner div
-    links = first_inner_div.find_all("a")
+    categories = soup.find("div", class_="quote-header_categories")
+    if categories is None:
+        categories = soup.find("div", class_="quote-links")
+    links = categories.find_all("a") if categories else []
 
     for link in links:
         href = link.get("href", "")

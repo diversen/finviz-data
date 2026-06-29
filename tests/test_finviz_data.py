@@ -10,7 +10,7 @@ from bs4 import BeautifulSoup
 
 
 ticker = "AAPL"
-FIXTURE = Path(__file__).resolve().parents[1] / "finviz_example.html"
+FIXTURE = Path(__file__).resolve().parents[1] / "finviz_example_latest.html"
 
 
 class TestFinvizData(unittest.TestCase):
@@ -85,9 +85,9 @@ class TestFinvizData(unittest.TestCase):
     def test_get_fundamentals(self):
         fundamentals = finviz_data.get_fundamentals(self.soup)
         self.assertIsInstance(fundamentals, dict)
-        self.assertEqual(fundamentals["Market Cap"], "4282.54B")
-        self.assertEqual(fundamentals["P/E"], "35.27")
-        self.assertEqual(fundamentals["Volatility"], "3.27% 2.16%")
+        self.assertEqual(fundamentals["Market Cap"], "4183.77B")
+        self.assertEqual(fundamentals["P/E"], "34.46")
+        self.assertEqual(fundamentals["Volatility"], "3.31% 2.71%")
 
     def test_get_company_info(self):
         company_info = finviz_data.get_company_info(self.soup)
@@ -109,14 +109,16 @@ class TestFinvizData(unittest.TestCase):
     def test_get_get_fundamentals_converted(self):
         fundamentals_converted = finviz_data.get_fundamentals_float(self.soup)
         self.assertIsInstance(fundamentals_converted, dict)
-        self.assertEqual(fundamentals_converted["Market Cap"], 4282.54e9)
-        self.assertEqual(fundamentals_converted["P/E"], 35.27)
-        self.assertAlmostEqual(fundamentals_converted["Volatility Week"], 0.0327)
-        self.assertAlmostEqual(fundamentals_converted["Volatility Month"], 0.0216)
+        self.assertAlmostEqual(
+            fundamentals_converted["Market Cap"], 4183.77e9, delta=1
+        )
+        self.assertEqual(fundamentals_converted["P/E"], 34.46)
+        self.assertAlmostEqual(fundamentals_converted["Volatility Week"], 0.0331)
+        self.assertAlmostEqual(fundamentals_converted["Volatility Month"], 0.0271)
         self.assertEqual(fundamentals_converted["52W High Price"], 317.4)
-        self.assertAlmostEqual(fundamentals_converted["52W High Change"], -0.0813)
-        self.assertEqual(fundamentals_converted["52W Low Price"], 195.07)
-        self.assertAlmostEqual(fundamentals_converted["52W Low Change"], 0.4947)
+        self.assertAlmostEqual(fundamentals_converted["52W High Change"], -0.1025)
+        self.assertEqual(fundamentals_converted["52W Low Price"], 199.26)
+        self.assertAlmostEqual(fundamentals_converted["52W Low Change"], 0.4296)
         self.assertAlmostEqual(fundamentals_converted["EPS past 3Y"], 0.0689)
         self.assertAlmostEqual(fundamentals_converted["EPS past 5Y"], 0.1791)
         self.assertAlmostEqual(fundamentals_converted["Sales past 3Y"], 0.0181)
@@ -124,9 +126,9 @@ class TestFinvizData(unittest.TestCase):
         self.assertAlmostEqual(fundamentals_converted["Dividend Gr. 3Y"], 0.0426)
         self.assertAlmostEqual(fundamentals_converted["Dividend Gr. 5Y"], 0.0498)
         self.assertEqual(fundamentals_converted["Dividend Est. Amount"], 1.08)
-        self.assertAlmostEqual(fundamentals_converted["Dividend Est. Yield"], 0.0037)
+        self.assertAlmostEqual(fundamentals_converted["Dividend Est. Yield"], 0.0038)
         self.assertEqual(fundamentals_converted["Dividend TTM Amount"], 1.05)
-        self.assertAlmostEqual(fundamentals_converted["Dividend TTM Yield"], 0.0036)
+        self.assertAlmostEqual(fundamentals_converted["Dividend TTM Yield"], 0.0037)
         self.assertEqual(fundamentals_converted["Optionable"], True)
         self.assertEqual(fundamentals_converted["Shortable"], True)
         self.assertAlmostEqual(fundamentals_converted["EPS Surprise"], 0.033)
